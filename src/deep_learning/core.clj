@@ -1,4 +1,8 @@
-(ns deep-learning.core)
+(ns deep-learning.core
+  (:use plumbing.core)
+  (:require [plumbing.graph :as graph]))
+
+
 
 ;; Neuron in a neural network
 ;; variables:
@@ -23,3 +27,9 @@
 (neuron [1 2 3] [0.1 0.2 0.3] 1 sigmoid)
 
 ;; build the neural network up using Graph
+(def neural-net-graph
+  "A graph describing the structure of the neural network"
+  { :hidden-layer (fnk [x w] [(neuron x (w 0) 1 sigmoid) (neuron x (w 1) 1 sigmoid) (neuron x (w 2) 1 sigmoid)] )
+    :output-unit (fnk [hidden-layer w-output-layer] (neuron hidden-layer w-output-layer 1 sigmoid))})
+
+(def neural-net (graph/eager-compile neural-net-graph))
