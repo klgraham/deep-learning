@@ -33,3 +33,5 @@
     :output-unit (fnk [hidden-layer w-output-layer] (neuron hidden-layer w-output-layer 1 sigmoid))})
 
 (def neural-net (graph/eager-compile neural-net-graph))
+
+(neural-net {:x [1 2 3] :w [[0.1 0.2 -0.1] [0.1 0.2 0.1] [0.5 -0.1 -0.2]] :w-output-layer [1 1 1]})
