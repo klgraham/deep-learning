@@ -1,26 +1,39 @@
 (ns deep-learning.core
   (:use plumbing.core)
-  (:require [plumbing.graph :as graph]))
+  (:require [plumbing.graph :as graph]
+            [schema.core :as s]
+            [clojure.core.reducers :as r]))
 
+;;; Schema definitions for type-checking and documentation
+(def DoubleVec [double])
 
+;;; Neural Network functions
 
-;; Neuron in a neural network
-;; variables:
-;; x = neuron inputs (x_1, x_2, ...)
-;; w = weights for each input (w_1, w_2, ...) these will be learned
-;; b = bias
-;; f = f(z) = activation function, z = <x|w> + b
-(defn neuron [x w b f]
-  (f (reduce + (conj (map * x w) b))))
+(s/defrecord)
+(s/defn neuron
+  "Neuron in a neural network.
+  variables:
+  x = neuron inputs (x_1, x_2, ...)
+  w = weights for each input (w_1, w_2, ...) these will be learned
+  b = bias
+  f = f(z) = activation function, z = <x|w> + b"
+  [x :- DoubleVec
+   w :- DoubleVec
+   b :- s/Number f]
+  {:pre (= (count x) (count w))}
+  (f (r/reduce + (conj (map * x w) b))))
 
+(s/defn sigmoid
+  "Sigmoid function f(z)=1/(1 + \exp{-z})"
+  [z :- s/Number]
+  (/ 1 (+ 1 (Math/exp (* -1. z)))))
 
-;; Sigmoid function f(z)=1/(1 + \exp{-z})
-(defn sigmoid [z]
-  (/ 1 (+ 1 (Math/exp (* -1 z)))))
+(s/defn d-sigmoid
+  "derivative of sigmoid function"
+  [z :- s/Number]
+  (* (sigmoid z) (- 1. (sigmoid z))))
 
-;; derivative of sigmoid function
-(defn d-sigmoid [z]
-  (* (sigmoid z) (- 1 (sigmoid z))))
+(defn neural-layer [elements])
 
 ;; plotting sigmoid function
 (map sigmoid (range -5 5))
